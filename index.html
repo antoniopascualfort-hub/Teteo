@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Resultados del Equipo</title>
+  <title>TETEO CF — Resultados y estadísticas</title>
   <style>
     :root{
-      --bg:#0f172a;           /* fondo oscuro */
-      --panel:#111827;        /* paneles */
-      --accent:#22c55e;       /* verde acento */
-      --muted:#94a3b8;        /* gris texto secundario */
-      --text:#e5e7eb;         /* texto claro */
-      --warn:#ef4444;         /* rojo */
+      --bg:#0f172a;
+      --panel:#111827;
+      --accent:#22c55e;
+      --muted:#94a3b8;
+      --text:#e5e7eb;
+      --warn:#ef4444;
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",sans-serif;background:linear-gradient(180deg,#0b1222,#0f172a 25%);color:var(--text)}
-    .container{max-width:1100px;margin:auto;padding:24px}
+    .container{max-width:1200px;margin:auto;padding:24px}
     header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:20px}
     .brand{display:flex;align-items:center;gap:14px}
     .logo{width:48px;height:48px;border-radius:12px;background:conic-gradient(from 210deg,#22c55e,#38bdf8,#a78bfa,#22c55e);filter:saturate(1.1);box-shadow:0 8px 24px rgba(34,197,94,.25)}
@@ -23,8 +23,8 @@
     .subtitle{color:var(--muted);font-size:14px}
     .btn{border:1px solid #334155;background:#0b1324;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.2s}
     .btn:hover{transform:translateY(-1px);border-color:#475569}
-    .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:18px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
     .card{background:linear-gradient(180deg,#0f172a,#0b1222);border:1px solid #1f2937;border-radius:16px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.35)}
     .card h2{margin:0;padding:14px 16px;border-bottom:1px solid #1f2937;background:#0b1324;font-size:18px}
     .card .content{padding:16px}
@@ -44,6 +44,11 @@
     footer{margin-top:28px;color:#a1a1aa;font-size:12px;text-align:center}
     .pill{border:1px solid #334155;background:#0b1324;color:#cbd5e1;padding:6px 10px;border-radius:999px}
     input[type="text"]{background:#0b1324;border:1px solid #334155;border-radius:10px;color:var(--text);padding:8px 10px;min-width:220px}
+    .swatches{display:flex;gap:6px;align-items:center;justify-content:center}
+    .swatch{width:18px;height:18px;border-radius:4px;border:1px solid #334155;display:inline-block}
+    .card small{color:var(--muted)}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+    @media (max-width:980px){.grid3{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -52,14 +57,14 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <h1 id="siteTitle">Liga / Equipo</h1>
-          <div class="subtitle">Resultados y tabla de posiciones</div>
+          <h1 id="siteTitle">TETEO CF</h1>
+          <div class="subtitle">Resultados, tabla y estadísticas</div>
         </div>
       </div>
       <div class="actions">
         <input id="titleInput" type="text" placeholder="Escribe el nombre del equipo o liga"/>
         <button class="btn" onclick="saveTitle()">Guardar título</button>
-        <button class="btn" onclick="exportCSV()">Descargar CSV</button>
+        <button class="btn" onclick="exportCSV()">Descargar CSV Posiciones</button>
       </div>
     </header>
 
@@ -90,7 +95,7 @@
       </section>
 
       <section class="card" aria-label="Cargar datos">
-        <h2>Actualizar datos (pegar CSV)</h2>
+        <h2>Actualizar posiciones (pegar CSV)</h2>
         <div class="content">
           <p style="margin-top:0">Pega aquí la tabla <b>en formato CSV con comas</b> (incluye la fila de encabezados). Ejemplo: <span class="pill">Equipos,Puntos,J,...</span></p>
           <details>
@@ -108,27 +113,175 @@
       </section>
     </div>
 
+    <!-- Nueva fila de tarjetas: Goleadores, Asistencia y Colores de camisetas -->
+    <div class="grid3" style="margin-top:18px">
+      <!-- Goleadores -->
+      <section class="card" aria-label="Goleadores Teteo">
+        <h2>Goleadores de TETEO</h2>
+        <div class="content" style="overflow:auto;max-height:60vh">
+          <table id="scorersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Jugador</th>
+                <th>Goles</th>
+                <th>Partidos</th>
+                <th>Promedio</th>
+              </tr>
+            </thead>
+            <tbody id="scorersBody"></tbody>
+          </table>
+          <details style="margin-top:12px">
+            <summary style="cursor:pointer">Actualizar goleadores (pegar CSV)</summary>
+            <small>Formato: Jugador,Goles,Partidos,Promedio</small>
+            <textarea id="scorersCsv" style="margin-top:8px"></textarea>
+            <div class="actions">
+              <button class="btn" onclick="loadScorers()">Cargar</button>
+              <button class="btn" onclick="saveScorers()">Guardar</button>
+              <button class="btn" onclick="resetScorers()" style="border-color:#ef4444;color:#fecaca">Ejemplo</button>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Asistencia -->
+      <section class="card" aria-label="Asistencia Teteo">
+        <h2>Asistencia del plantel</h2>
+        <div class="content" style="overflow:auto;max-height:60vh">
+          <table id="attendanceTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Miembro</th>
+                <th>PJ</th>
+                <th>Asistencias</th>
+                <th>% Asistencia</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceBody"></tbody>
+          </table>
+          <details style="margin-top:12px">
+            <summary style="cursor:pointer">Actualizar asistencia (pegar CSV)</summary>
+            <small>Formato: Miembro,PJ,Asistencias,%</small>
+            <textarea id="attendanceCsv" style="margin-top:8px"></textarea>
+            <div class="actions">
+              <button class="btn" onclick="loadAttendance()">Cargar</button>
+              <button class="btn" onclick="saveAttendance()">Guardar</button>
+              <button class="btn" onclick="resetAttendance()" style="border-color:#ef4444;color:#fecaca">Ejemplo</button>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- Colores de camisetas rivales -->
+      <section class="card" aria-label="Colores camisetas rivales">
+        <h2>Colores de camisetas (rivales)</h2>
+        <div class="content" style="overflow:auto;max-height:60vh">
+          <table id="kitsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Equipo</th>
+                <th>Primaria</th>
+                <th>Secundaria</th>
+                <th>Vista</th>
+              </tr>
+            </thead>
+            <tbody id="kitsBody"></tbody>
+          </table>
+          <details style="margin-top:12px">
+            <summary style="cursor:pointer">Actualizar colores (pegar CSV)</summary>
+            <small>Formato: Equipo,Primaria(#hex),Secundaria(#hex)</small>
+            <textarea id="kitsCsv" style="margin-top:8px"></textarea>
+            <div class="actions">
+              <button class="btn" onclick="loadKits()">Cargar</button>
+              <button class="btn" onclick="saveKits()">Guardar</button>
+              <button class="btn" onclick="resetKits()" style="border-color:#ef4444;color:#fecaca">Ejemplo</button>
+            </div>
+          </details>
+        </div>
+      </section>
+    </div>
+
     <footer>
-      Hecho con ❤️ para tu equipo. Puedes alojar este archivo gratis en GitHub Pages, Netlify o Vercel.
+      Hecho con ❤️ para TETEO CF. Archivo listo para GitHub Pages.
     </footer>
   </div>
 
   <script>
-    const DEFAULT_CSV = `Equipos,Puntos,J,G,E,P,I,TF,TC,TF-TC,TF/TC\nTIGRES 2.0,3,1,1,0,0,0,11,2,9,5.50\nJUVENTUS DE TU PADRE FC,3,1,1,0,0,0,7,2,5,3.50\nGatunos FC,3,1,1,0,0,0,6,2,4,3.00\nAlfombras Fernandez,3,1,1,0,0,0,4,1,3,4.00\nLeones,3,1,1,0,0,0,4,2,2,2.00\nOZONE FC,1,1,0,1,0,0,2,2,0,1.00\nTETEO CF,1,1,0,1,0,0,2,2,0,1.00\nVDP CLUB,0,1,0,0,1,0,2,4,-2,0.50\nPanasLosGusanos,0,1,0,0,1,0,1,4,-3,0.25\nNLM FC,0,1,0,0,1,0,2,6,-4,0.33\nMinguito FC,0,1,0,0,1,0,2,7,-5,0.29\nCSKA DE COUSCOUS,0,1,0,0,1,0,2,11,-9,0.18`;
+    // Posiciones (puedes reemplazarlo con tu CSV real)
+    const DEFAULT_CSV = `Equipos,Puntos,J,G,E,P,I,TF,TC,TF-TC,TF/TC
+TIGRES 2.0,3,1,1,0,0,0,11,2,9,5.50
+JUVENTUS DE TU PADRE FC,3,1,1,0,0,0,7,2,5,3.50
+Gatunos FC,3,1,1,0,0,0,6,2,4,3.00
+Alfombras Fernandez,3,1,1,0,0,0,4,1,3,4.00
+Leones,3,1,1,0,0,0,4,2,2,2.00
+OZONE FC,1,1,0,1,0,0,2,2,0,1.00
+TETEO CF,1,1,0,1,0,0,2,2,0,1.00
+VDP CLUB,0,1,0,0,1,0,2,4,-2,0.50
+PanasLosGusanos,0,1,0,0,1,0,1,4,-3,0.25
+NLM FC,0,1,0,0,1,0,2,6,-4,0.33
+Minguito FC,0,1,0,0,1,0,2,7,-5,0.29
+CSKA DE COUSCOUS,0,1,0,0,1,0,2,11,-9,0.18`;
+
+    // Goleadores por defecto (J1+J2)
+    const DEFAULT_SCORERS_CSV = `Jugador,Goles,Partidos,Promedio
+Maxi,3,2,1.50
+Guevara,1,2,0.50
+Azaña,1,2,0.50`;
+
+    // Asistencia del plantel (J1+J2)
+    const DEFAULT_ATT_CSV = `Miembro,PJ,Asistencias,%
+Nacho,2,2,100%
+Broncano,2,1,50%
+Guevara,2,2,100%
+Julio,2,1,50%
+Sebas,2,2,100%
+Vigil,2,1,50%
+Gabri,2,2,100%
+Juan de Santis,2,1,50%
+Maxi,2,2,100%
+Manu,2,0,0%
+Antonio,2,1,50%
+Azaña,2,0,0%
+Monarca,2,1,50%
+Álvaro,2,1,50%
+Mauri,2,2,100%`;
+
+    // Colores de camisetas (aproximados en HEX)
+    const DEFAULT_KITS_CSV = `Equipo,Primaria,Secundaria
+Alfombras Fernandez,#ffffff,#ffffff
+CSKA DE COUSCOUS,#0057ff,#ffd400
+Gatunos FC,#ff2b2b,#000000
+JUVENTUS DE TU PADRE FC,#ffffff,#000000
+Leones,#ffffff,#ffffff
+Minguito FC,#ffffff,#ffffff
+NLM FC,#000000,#ffffff
+OZONE FC,#0070ff,#0070ff
+PanasLosGusanos,#ffffff,#000000
+TIGRES 2.0,#ff2b2b,#000000
+VDP CLUB,#003366,#003366
+TETEO CF,#000000,#ffffff`;
 
     const tbody = document.getElementById('tbody');
     const csvArea = document.getElementById('csv');
     const example = document.getElementById('example');
 
+    const scorersBody = document.getElementById('scorersBody');
+    const attendanceBody = document.getElementById('attendanceBody');
+    const kitsBody = document.getElementById('kitsBody');
+    const scorersCsv = document.getElementById('scorersCsv');
+    const attendanceCsv = document.getElementById('attendanceCsv');
+    const kitsCsv = document.getElementById('kitsCsv');
+
     function parseCSV(text){
-      // Admite líneas con comillas simples o dobles básicas; divide por comas que no están dentro de comillas
-      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      const lines = text.trim().split(/\\r?\\n/).filter(Boolean);
       const rows = lines.map(line => {
         const cells = [];
         let cur = '', inside = false, quote = '';
         for (let i=0;i<line.length;i++){
           const ch = line[i];
-          if ((ch==='"' || ch==='\'') && (!inside || line[i-1]!=="\\")){
+          if ((ch==='\"' || ch==='\\'') && (!inside || line[i-1]!==\"\\\\\")){
             if(!inside){inside=true;quote=ch;}
             else if(quote===ch){inside=false;}
             else {cur+=ch;}
@@ -143,14 +296,12 @@
     }
 
     function renderTable(rows){
-      // Primera fila se asume encabezado; resto datos
       const header = rows[0] || [];
       const data = rows.slice(1);
       tbody.innerHTML = '';
       data.forEach((cols, idx) => {
         const tr = document.createElement('tr');
         const diff = Number((cols[header.indexOf('TF-TC')]||'').replace(',', '.'));
-        const ratio = Number((cols[header.indexOf('TF/TC')]||'').replace(',', '.'));
         tr.innerHTML = `
           <td class="rank">${idx+1}º</td>
           <td class="team">${cols[header.indexOf('Equipos')] || ''}</td>
@@ -169,6 +320,63 @@
       });
     }
 
+    function renderScorers(rows){
+      const header = rows[0] || [];
+      const data = rows.slice(1);
+      scorersBody.innerHTML = '';
+      data.sort((a,b)=> Number(b[header.indexOf('Goles')]) - Number(a[header.indexOf('Goles')]));
+      data.forEach((cols, i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i+1}</td>
+          <td style="text-align:left">${cols[header.indexOf('Jugador')]||''}</td>
+          <td><span class="badge">${cols[header.indexOf('Goles')]||''}</span></td>
+          <td>${cols[header.indexOf('Partidos')]||''}</td>
+          <td>${cols[header.indexOf('Promedio')]||''}</td>`;
+        scorersBody.appendChild(tr);
+      });
+    }
+
+    function renderAttendance(rows){
+      const header = rows[0] || [];
+      const data = rows.slice(1);
+      attendanceBody.innerHTML = '';
+      data.sort((a,b)=> (parseFloat((b[3]||'').toString().replace('%',''))||0) - (parseFloat((a[3]||'').toString().replace('%',''))||0));
+      data.forEach((cols, i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i+1}</td>
+          <td style="text-align:left">${cols[header.indexOf('Miembro')]||''}</td>
+          <td>${cols[header.indexOf('PJ')]||''}</td>
+          <td>${cols[header.indexOf('Asistencias')]||''}</td>
+          <td>${cols[header.indexOf('%')]||cols[header.indexOf('% Asistencia')]||''}</td>`;
+        attendanceBody.appendChild(tr);
+      });
+    }
+
+    function renderKits(rows){
+      const header = rows[0] || [];
+      const data = rows.slice(1);
+      kitsBody.innerHTML = '';
+      data.forEach((cols, i)=>{
+        const primary = (cols[header.indexOf('Primaria')]||'').trim();
+        const secondary = (cols[header.indexOf('Secundaria')]||'').trim();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="rank">${i+1}</td>
+          <td style="text-align:left">${cols[header.indexOf('Equipo')]||''}</td>
+          <td>${primary}</td>
+          <td>${secondary}</td>
+          <td>
+            <div class="swatches">
+              <span class="swatch" style="background:${primary}"></span>
+              <span class="swatch" style="background:${secondary}"></span>
+            </div>
+          </td>`;
+        kitsBody.appendChild(tr);
+      });
+    }
+
     function loadCSV(){
       const text = csvArea.value.trim();
       if(!text){alert('Pega el CSV en el cuadro de texto.');return}
@@ -181,9 +389,22 @@
       alert('¡Guardado! La próxima vez se cargará automáticamente.');
     }
 
-    function resetCSV(){
-      csvArea.value = DEFAULT_CSV; loadCSV();
-    }
+    function resetCSV(){ csvArea.value = DEFAULT_CSV; loadCSV(); }
+
+    // Scorers handlers
+    function loadScorers(){ const rows = parseCSV(scorersCsv.value.trim()); renderScorers(rows); }
+    function saveScorers(){ localStorage.setItem('scorers_csv', scorersCsv.value.trim()); alert('Goleadores guardados'); }
+    function resetScorers(){ scorersCsv.value = DEFAULT_SCORERS_CSV; loadScorers(); }
+
+    // Attendance handlers
+    function loadAttendance(){ const rows = parseCSV(attendanceCsv.value.trim()); renderAttendance(rows); }
+    function saveAttendance(){ localStorage.setItem('attendance_csv', attendanceCsv.value.trim()); alert('Asistencia guardada'); }
+    function resetAttendance(){ attendanceCsv.value = DEFAULT_ATT_CSV; loadAttendance(); }
+
+    // Kits handlers
+    function loadKits(){ const rows = parseCSV(kitsCsv.value.trim()); renderKits(rows); }
+    function saveKits(){ localStorage.setItem('kits_csv', kitsCsv.value.trim()); alert('Colores guardados'); }
+    function resetKits(){ kitsCsv.value = DEFAULT_KITS_CSV; loadKits(); }
 
     function exportCSV(){
       const csv = csvArea.value.trim() || DEFAULT_CSV;
@@ -203,11 +424,27 @@
     }
 
     function restore(){
+      // posiciones
       example.textContent = DEFAULT_CSV;
       const saved = localStorage.getItem('tabla_csv');
       csvArea.value = saved || DEFAULT_CSV;
-      const rows = parseCSV(csvArea.value);
-      renderTable(rows);
+      renderTable(parseCSV(csvArea.value));
+
+      // scorers
+      const sSaved = localStorage.getItem('scorers_csv');
+      scorersCsv.value = sSaved || DEFAULT_SCORERS_CSV;
+      renderScorers(parseCSV(scorersCsv.value));
+
+      // attendance
+      const aSaved = localStorage.getItem('attendance_csv');
+      attendanceCsv.value = aSaved || DEFAULT_ATT_CSV;
+      renderAttendance(parseCSV(attendanceCsv.value));
+
+      // kits
+      const kSaved = localStorage.getItem('kits_csv');
+      kitsCsv.value = kSaved || DEFAULT_KITS_CSV;
+      renderKits(parseCSV(kitsCsv.value));
+
       const t = localStorage.getItem('site_title');
       if(t){document.getElementById('siteTitle').textContent = t;document.getElementById('titleInput').value = t;}
     }
